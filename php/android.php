@@ -57,6 +57,7 @@ class adb {
     elseif (!is_array($ids)) die ("openURL expects \$ids to be an array of device ids");
     $status = array();
     foreach ($ids as $id) {
+      $this->wakeDevice($id);
       $status[$id]=$this->openURLByID($url,$id);
     }
     return $status;
@@ -64,6 +65,10 @@ class adb {
 
   public function takeScreenshot($id,$filename) {
     return shell_exec("adb -s $id shell screencap -p | perl -pe ".escapeshellarg('s/\x0D\x0A/\x0A/g')." > $filename");
+  }
+
+  public function sendKeypress($id,$x,$y,$type) {
+    
   }
 
   private function openURLByID($url,$id) {
@@ -98,14 +103,4 @@ class adb {
   }
 }
 
-$adb = new adb;
-$devices = $adb->devices;
-
-foreach ($devices as $id=>$device) {
-  echo $device['name']." ($id)";
-  $adb->wakeDevice($id);
-  $adb->openURL('http://www.fbd.ie',$id);
-  sleep(100);
-  $adb->takeScreenshot($id,"$id.png");
-}
  ?>
